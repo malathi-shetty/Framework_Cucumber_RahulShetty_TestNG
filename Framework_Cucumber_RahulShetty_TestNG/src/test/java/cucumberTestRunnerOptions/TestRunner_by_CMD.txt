@@ -1,0 +1,38 @@
+mvn test
+
+
+mvn test -Dcucumber.filter.tags="@PlaceOrder"
+
+
+
+mvn test -Dcucumber.features="D:\Git Projects\Framework_Cucumber_RahulShetty\Features\searchProduct.feature" -Dbrowser=chrome
+
+
+https://cucumber.io/docs/cucumber/api/#options
+
+https://jsonformatter.org/xml-formatter
+
+open jenkins.war & open cmd & run:
+
+java -jar jenkins.war --httpPort=9090
+
+
+jenkins: 
+
+test -Dcucumber.filter.tags="@'$tags'"
+
+test -Dcucumber.filter.tags="@'$tags'" -Dbrowser="@'$browser'"
+
+
+
+Jenkins used a cron expression, and the different fields are: 
+1 MINUTES Minutes in one hour (0-59)
+2 HOURS Hours in one day (0-23)
+3 DAYMONTH Day in a month (1-31)
+4 MONTH Month in a year (1-12)
+5 DAYWEEK Day of the week (0-7) where 0 and 7 are sunday
+
+
+
+
+

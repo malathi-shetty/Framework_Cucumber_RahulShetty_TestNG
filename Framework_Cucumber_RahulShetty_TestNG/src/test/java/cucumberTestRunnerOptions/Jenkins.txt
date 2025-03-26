@@ -1,0 +1,114 @@
+Jenkins used a cron expression, and the different fields are: 
+1 MINUTES Minutes in one hour (0-59)
+2 HOURS Hours in one day (0-23)
+3 DAYMONTH Day in a month (1-31)
+4 MONTH Month in a year (1-12)
+5 DAYWEEK Day of the week (0-7) where 0 and 7 are sunday
+
+Explain
+
+ChatGPT said:
+Jenkins uses cron expressions to schedule jobs at specific times. A cron expression consists of five fields, each specifying a unit of time for scheduling a job. Here’s a breakdown of the fields and their meanings:
+
+MINUTES (0-59): This field specifies the minute of the hour when the job should run. The value can range from 0 to 59. For example, a value of "5" means the job will run at the 5th minute of the hour.
+
+HOURS (0-23): This field specifies the hour of the day when the job should run. The value can range from 0 (midnight) to 23 (11 PM). For example, "3" means the job will run at 3 AM.
+
+DAYMONTH (1-31): This field specifies the day of the month when the job should run. The value can range from 1 to 31, depending on the month. For example, "15" means the job will run on the 15th day of the month.
+
+MONTH (1-12): This field specifies the month in which the job should run. The value can range from 1 to 12, where 1 represents January, and 12 represents December. For example, "6" means the job will run in June.
+
+DAYWEEK (0-7): This field specifies the day of the week when the job should run. The value can range from 0 to 7, where both 0 and 7 represent Sunday. For example, "1" means the job will run on Monday.
+
+Example of a Cron Expression:
+A cron expression like 30 3 15 6 * 1 would mean:
+
+Run at 30 minutes past 3 AM (3:30 AM)
+
+On the 15th of June (month 6)
+
+On Monday (since 1 represents Monday).
+
+Special Characters:
+* (Asterisk): This means "every" value. For example, * in the minute field means the job runs every minute.
+
+, (Comma): This allows you to specify multiple values. For example, 1,5,10 in the minute field means the job runs at 1, 5, and 10 minutes past the hour.
+
+- (Dash): This specifies a range of values. For example, 1-5 in the hour field means the job runs between 1 AM and 5 AM.
+
+/ (Slash): This specifies a step value. For example, */5 in the minute field means the job runs every 5 minutes.
+
+By combining these, you can create very specific schedules for Jenkins jobs.
+
+Example: 30 14 15 6 1
+
+This would mean:
+
+30: At the 30th minute.
+
+14: At 2 PM (14:00).
+
+15: On the 15th day of the month.
+
+6: In June (month 6).
+
+1: On Monday (since 1 represents Monday).
+
+So, this job would run at 2:30 PM on June 15th, but only if it's a Monday.
+
+Example: 0 12 * * *
+
+This would mean:
+
+0: At the 0th minute (on the hour).
+
+12: At 12 PM (noon).
+
+*: Every day of the month.
+
+*: Every month.
+
+*: Every day of the week.
+
+So, this job would run every day at noon (12:00 PM).
+
+
+
+
+**********
+
+1. "Build periodically" / "Schedule":
+In Jenkins, "Build periodically" is used to define when a job should run automatically based on a cron-like schedule. The schedule is defined using cron expressions.
+
+2. Cron Expression: 0 12 * * *:
+This cron expression means:
+
+0: Run at the 0th minute of the hour (on the hour).
+
+12: Run at 12 PM (noon).
+
+*: Every day of the month.
+
+*: Every month.
+
+*: Every day of the week.
+
+So, this cron expression will run every day at 12:00 PM (noon).
+
+3. Using H 12 * * * to Spread the Load:
+Jenkins provides a feature to spread the load more evenly by adding H (a hash-based distribution) instead of specifying a fixed minute. Using H 12 * * * means that the job will run at some random minute around noon, determined by Jenkins. This helps to avoid all jobs scheduled for exactly 12:00 PM from running at the same time and overloading the system.
+
+H 12 * * *: Jenkins will hash the job name and calculate a minute value (e.g., H could translate to 15 for a particular job), meaning that instead of running at exactly 12:00 PM, it may run at 12:15 PM, 12:30 PM, or some other minute, ensuring better load distribution.
+
+4. What Happens on Wednesday, 26 March 2025, at 12:00 PM IST:
+If the last run was at 12:00 PM (India Standard Time) on Wednesday, 26 March 2025, and the cron expression used was 0 12 * * *, the job would indeed run at that exact time.
+
+5. Next Run on Thursday, 27 March 2025, at 12:00 PM IST:
+If the cron expression is 0 12 * * *, the next run would happen exactly one day later, at 12:00 PM IST on Thursday, 27 March 2025.
+
+To Summarize:
+0 12 * * *: The job runs at 12:00 PM IST every day.
+
+H 12 * * *: The job runs at some random minute around 12:00 PM IST every day, but it will spread the load more evenly across different minutes.
+
+So, if you want to avoid jobs running exactly at noon and potentially overloading your system, you would use H 12 * * * instead of 0 12 * * *.
