@@ -9,8 +9,7 @@ import io.cucumber.testng.CucumberOptions;
 		// html, xml, json, junit, extent :
 		// https://extentreports.com/docs/versions/4/java/cucumber4.html
 		plugin = { "pretty", "html:target/cucumber.html", "json:target/cucumber.json",
-				"com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:",
-				})
+				"com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:", })
 public class FailedTestNGTestRunner extends AbstractTestNGCucumberTests {
 	// The class can remain empty if it extends AbstractTestNGCucumberTests
 
