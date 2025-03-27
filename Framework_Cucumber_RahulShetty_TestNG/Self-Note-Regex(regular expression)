@@ -1,0 +1,247 @@
+^:
+
+The ^ asserts the beginning of the string.
+• It ensures that the string starts with "User enters" exactly (no other text or spaces before it).
+
+-----------
+
+(.+):
+
+The (.+) is a capture group.
+• .+: This matches one or more of any character (except newlines), and the parentheses () group it together as a capture group.
+• This is different from ([^\"]*), which would only match characters except double quotes.
+• (.+) matches everything, including spaces and special characters, until the next part of the expression.
+• So, (.+) will capture everything between "User enters " and " and ", as one string (the first input, e.g., the username).
+
+------
+
+$:
+
+The $ asserts the end of the string.
+• It ensures that the string ends after the second captured value.
+• Key Differences Between (.+) and ([^\"]*):
+
+------
+
+(.+):
+
+Captures any characters (including spaces, punctuation, and special characters).
+• Can match an entire phrase or sentence, as long as it is between the words User enters and and.
+• It does not limit itself to only matching non-quote characters, unlike [^\"]*.
+
+-----
+
+([^\"]*):
+
+Captures any characters except double quotes (").
+• It matches a sequence of characters between quotes.
+• It's used when you need to specifically capture text inside double quotes, such as "user1" and "pass1".
+
+---------
+
+1. \"([^\"]*)\" (Matching text in double quotes)
+
+Use Case:
+• Use this when you need to capture text that is enclosed in double quotes.
+• This is particularly useful when your feature file includes strings or values that are inside quotes.
+
+Example:
+
+Given I have the username "user1" and password "pass1"
+Step Definition:
+
+@Given("^I have the username \"([^\"]*)\" and password \"([^\"]*)\"$")
+public void givenUsernameAndPassword(String username, String password) {
+    System.out.println("Username: " + username + ", Password: " + password);
+}
+
+Explanation:
+• The regular expression \"([^\"]*)\" matches text enclosed within double quotes, so it will capture user1 and pass1 in the feature file and pass them into the step definition.
+
+2. (.+) (Capturing any characters including spaces)
+Use Case:
+• Use this when you need to capture any string, including spaces, punctuation, or special characters, with no restrictions.
+• It is suitable when you want to capture free-form text or general phrases that can include spaces.
+• Example:
+
+Given User enters user1 and pass1
+Step Definition:
+
+@When("^User enters (.+) and (.+)$")
+public void userEntersCredentials(String username, String password) {
+    System.out.println("Username: " + username + ", Password: " + password);
+}
+
+Explanation:
+• The regular expression (.+) captures everything (any sequence of characters) between User enters and and, including spaces and special characters.
+• This is more flexible than ([^\"]*) because it allows spaces and doesn't require the input to be inside quotes.
+
+3. \\d+ (Capturing digits only)
+
+Use Case:
+• Use this when you need to capture numbers (integers) from the feature file.
+• This is useful in scenarios where the user inputs numeric values like age, quantity, etc.
+
+• Example:
+
+Given I have entered 5 and 3 into the calculator
+
+Step Definition:
+
+@Given("^I have entered (\\d+) and (\\d+) into the calculator$")
+public void givenNumbersEntered(int num1, int num2) {
+    System.out.println("Numbers entered: " + num1 + " and " + num2);
+}
+
+Explanation:
+• The regular expression \\d+ matches one or more digits (numbers).
+• It will capture the numbers 5 and 3 and pass them as arguments to the step definition.
+
+4. \\d+\\.\\d+ (Capturing decimal numbers)
+Use Case:
+Use this when you need to capture decimal numbers (numbers with a dot) such as currency, measurements, etc.
+• Example:
+
+Given I have entered 5.75 into the calculator
+Step Definition:
+
+@Given("^I have entered (\\d+\\.\\d+) into the calculator$")
+public void givenDecimalNumberEntered(double num) {
+    System.out.println("Decimal number entered: " + num);
+}
+
+Explanation:
+• The regular expression \\d+\\.\\d+ captures decimal numbers.
+• The part \\d+ matches the whole number before the decimal point, and \\.\\d+ matches the decimal part.
+• For 5.75, it will capture 5.75 as a double.
+
+5. (add|subtract|multiply|divide) (Matching multiple options)
+
+Use Case:
+• Use this when you need to match one of several predefined options in the input, such as operations (add, subtract, etc.).
+
+Example:
+
+When I press add
+
+
+Step Definition:
+
+@When("^I press (add|subtract|multiply|divide)$")
+public void whenIPressOperation(String operation) {
+    System.out.println("Operation pressed: " + operation);
+}
+
+Explanation:
+• The regular expression (add|subtract|multiply|divide) matches any of the specified words (add, subtract, multiply, or divide).
+• The pipe | acts as an OR operator.
+• This is useful for steps that can have multiple values but you want to treat them in the same way.
+
+6. \\w+ (Matching alphanumeric words)
+
+Use Case:
+• Use this when you need to capture a single word or an alphanumeric string (letters, digits, and underscores).
+• This is commonly used for user names, IDs, or other single-word identifiers.
+
+• Example:
+
+Given I have entered the username user123
+
+Step Definition:
+
+@Given("^I have entered the username (\\w+)$")
+public void givenUsername(String username) {
+    System.out.println("Username entered: " + username);
+}
+
+Explanation:
+• The regular expression \\w+ matches a single word (alphanumeric, including underscores).
+• It would capture user123 in the feature file.
+
+7. \"(.*?)\" (Non-greedy matching of text between quotes)
+
+Use Case:
+• Use this when you want to match text inside quotes but non-greedy (i.e., you want to capture the shortest match possible between quotes).
+
+• Example:
+
+Given I have the description "Welcome to the system"
+Step Definition:
+
+@Given("^I have the description \"(.*?)\"$")
+public void givenDescription(String description) {
+    System.out.println("Description: " + description);
+}
+
+Explanation:
+• The \"(.*?)\" will match any text inside quotes but in a non-greedy way.
+
+• It will stop capturing at the first closing quote, rather than capturing everything to the last quote (which can happen with .*).
+
+8. \\bword\\b (Word boundaries)
+
+Use Case:
+• Use this when you want to ensure you're matching complete words and not just partial matches.
+
+• Example:
+
+Then I should see the word "success"
+Step Definition:
+
+@Then("^I should see the word \\b(success)\\b$")
+public void thenCheckWord(String word) {
+    System.out.println("Word found: " + word);
+}
+
+Explanation:
+\\b asserts word boundaries, ensuring that "success" is matched as a whole word, not as part of a longer word (like "successful").
+
+ 9. \\S+ (Non-whitespace characters)
+
+Use Case:
+• Use this when you need to match non-whitespace characters.
+
+• This is useful for usernames, IDs, or any input that shouldn't contain spaces.
+
+Example:
+
+Given I have entered a valid ID: user123
+Step Definition:
+
+@Given("^I have entered a valid ID: (\\S+)$")
+public void givenID(String id) {
+    System.out.println("Valid ID entered: " + id);
+}
+
+Explanation:
+• The regular expression \\S+ matches one or more non-whitespace characters, such as user123 in the feature file.
+
+10. \\d{2,4} (Matching a specific number of digits)
+
+Use Case:
+•  Use this when you need to match a specific number of digits (e.g., a year or a code).
+
+• Example:
+
+Given I have entered the year 2025
+Step Definition:
+
+@Given("^I have entered the year (\\d{2,4})$")
+public void givenYear(int year) {
+    System.out.println("Year entered: " + year);
+}
+
+Explanation:
+The regular expression \\d{2,4} matches a digit sequence that is between 2 and 4 digits long (e.g., 2025).
+
+Summary:
+• Use \"([^\"]*)\" for matching text inside double quotes.
+• Use (.+) for capturing any free-form text, including spaces.
+• Use \\d+ for matching integers (whole numbers).
+• Use \\d+\\.\\d+ for matching decimal numbers.
+• Use (add|subtract|multiply|divide) for matching multiple predefined options.
+• Use \\w+ for matching alphanumeric strings or words.
+• Use \"(.*?)\" for non-greedy matching of text inside quotes.
+• Use \\bword\\b for matching complete words.
+• Use \\S+ for matching non-whitespace characters.
+• Use \\d{2,4} for matching a specific number of digits.
