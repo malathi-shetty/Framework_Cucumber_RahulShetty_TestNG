@@ -1,0 +1,317 @@
+To develop end to end Cucumber Selenium Framework from Scratch. Below are the topics:
+
+• Build Maven Project with all the framework dependencies
+
+• Develop End to end Selenium Web Scenarios in the feature file
+
+• Implement TestNG /Junit Runner to run the framework
+
+• Understand the Single responsibility principle to distribute the implementation into multiple Step definitions.
+
+• Importance of Dependency injection to share the data between the Steps file
+
+• Understand the Page object Pattern to drive the locators from page files
+
+• Implement Factory Design pattern by writing PageObjectManager class to create objects of all PO classes
+
+• How driver can be configured and distributed across the files in the framework
+
+• How to run Cucumber Scenarios in Parallel Mode using Cucumber TestNG Runner
+
+• Build Test utilities for reusable Selenium methods
+
+• Implement Cucumber Hooks to capture Screenshots on test failures
+
+• Implement Cucumber Tags to run selected tests in the framework
+
+• Parameterizing the test data to run the Scenarios with multiple data sets
+
+• Creating HTML & Extent reports to run Cucumber Selenium tests
+
+• Running tests in parallel mode and generate Extent reports with screenshots attached for failed Scenarios
+
+• Run the cucumber tests using Maven & Command line options
+
+• Integrate the Framework to CI/CD Jenkins and Schedule the Jobs on regular time Interval
+
+• Create Parameterized Jenkin job to dynamically send the global properties at run time of Job execution
+    
+    *******
+    
+1. Build Maven Project with All Framework Dependencies
+• Create a new Maven project in your IDE (e.g., IntelliJ, Eclipse).
+
+• Define pom.xml with necessary dependencies:
+
+    • Cucumber dependencies
+
+    • Selenium WebDriver dependencies
+
+    • TestNG dependency
+
+    • ExtentReports for reporting
+
+Example pom.xml:
+
+<dependencies>
+    <!-- Cucumber dependencies -->
+    <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-java</artifactId>
+        <version>YOUR_CUCUMBER_VERSION</version>
+    </dependency>
+    <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-spring</artifactId>
+        <version>YOUR_CUCUMBER_VERSION</version>
+    </dependency>
+
+    <!-- Selenium WebDriver dependencies -->
+    <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-java</artifactId>
+        <version>YOUR_SELENIUM_VERSION</version>
+    </dependency>
+  
+    <!-- TestNG dependency -->
+    <dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>YOUR_TESTNG_VERSION</version>
+        <scope>test</scope>
+    </dependency>
+
+    <!-- ExtentReports for reporting -->
+    <dependency>
+        <groupId>com.aventstack</groupId>
+        <artifactId>extentreports</artifactId>
+        <version>YOUR_EXTENT_REPORT_VERSION</version>
+    </dependency>
+</dependencies>
+
+2. Develop End-to-End Selenium Web Scenarios in Feature File
+• Write Gherkin-style feature files that define the behavior of your application.
+
+Example:
+
+Feature: User Login
+
+  Scenario: Valid user login
+    Given User is on the login page
+    When User enters valid credentials
+    Then User is redirected to the homepage
+
+3. Implement TestNG/JUnit Runner to Execute the Framework
+• Create a TestNG or JUnit runner class to run the Cucumber tests.
+
+Example (TestNG):
+
+@RunWith(Cucumber.class)
+@CucumberOptions(
+    features = "src/test/resources/features",
+    glue = "stepDefinitions",
+    plugin = {"pretty", "html:target/cucumber-reports", "json:target/cucumber-reports/cucumber.json"}
+)
+public class TestRunner {
+}
+
+4. Single Responsibility Principle (SRP) for Step Definitions
+• Split step definitions into multiple classes based on the feature files to adhere to SRP.
+
+Example:
+
+public class LoginSteps {
+    @Given("User is on the login page")
+    public void userIsOnLoginPage() {
+        // code for opening login page
+    }
+    
+    @When("User enters valid credentials")
+    public void userEntersValidCredentials() {
+        // code for entering credentials
+    }
+    
+    @Then("User is redirected to the homepage")
+    public void userIsRedirectedToHomepage() {
+        // code for verifying home page
+    }
+}
+
+5. Use Dependency Injection for Sharing Data Between Steps
+• Use a Dependency Injection (DI) framework (e.g., Spring or Guice) to inject shared data or objects (like WebDriver).
+
+Example (Spring Context):
+
+@ContextConfiguration(classes = TestContext.class)
+public class LoginSteps {
+    @Autowired
+    private WebDriver driver;
+}
+
+6. Page Object Pattern for Locators
+• Create Page Object classes to encapsulate locators and actions for a page.
+
+Example:
+
+public class LoginPage {
+    private WebDriver driver;
+    
+    @FindBy(id = "username")
+    private WebElement usernameField;
+
+    @FindBy(id = "password")
+    private WebElement passwordField;
+
+    @FindBy(id = "loginButton")
+    private WebElement loginButton;
+
+    public LoginPage(WebDriver driver) {
+        this.driver = driver;
+    }
+
+    public void login(String username, String password) {
+        usernameField.sendKeys(username);
+        passwordField.sendKeys(password);
+        loginButton.click();
+    }
+}
+
+7. Implement Factory Design Pattern with PageObjectManager
+• Use Factory Design Pattern to create Page Object instances in a centralized manner.
+
+Example:
+
+public class PageObjectManager {
+    private WebDriver driver;
+    private LoginPage loginPage;
+    
+    public PageObjectManager(WebDriver driver) {
+        this.driver = driver;
+    }
+
+    public LoginPage getLoginPage() {
+        if (loginPage == null) {
+            loginPage = new LoginPage(driver);
+        }
+        return loginPage;
+    }
+}
+
+8. WebDriver Configuration and Distribution
+• Use Singleton or Dependency Injection to manage WebDriver across multiple classes.
+
+Example (Singleton):
+
+public class DriverFactory {
+    private static WebDriver driver;
+
+    public static WebDriver getDriver() {
+        if (driver == null) {
+            // Initialize WebDriver (e.g., ChromeDriver)
+            driver = new ChromeDriver();
+        }
+        return driver;
+    }
+
+    public static void closeDriver() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
+
+9. Parallel Test Execution with Cucumber TestNG Runner
+• Enable parallel test execution by setting parallel = true in the Cucumber TestNG runner.
+
+Example:
+
+@CucumberOptions(
+    features = "src/test/resources/features",
+    glue = "stepDefinitions",
+    plugin = {"pretty", "html:target/cucumber-reports", "json:target/cucumber-reports/cucumber.json"},
+    monochrome = true,
+    parallel = true
+)
+public class TestRunner {
+}
+
+10. Build Test Utilities for Reusable Selenium Methods
+• Create utility classes for reusable Selenium actions like wait, click, type, etc.
+
+Example:
+
+public class WebDriverUtils {
+    public static void waitForElementToBeVisible(WebDriver driver, WebElement element) {
+        new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.visibilityOf(element));
+    }
+}
+
+11. Implement Cucumber Hooks for Screenshot on Failures
+• Use Cucumber hooks to capture screenshots when a scenario fails.
+
+Example:
+
+@Before
+public void setUp() {
+    // Initialize WebDriver
+}
+
+@After
+public void tearDown(Scenario scenario) {
+    if (scenario.isFailed()) {
+        byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+        scenario.attach(screenshot, "image/png", scenario.getName());
+    }
+    driver.quit();
+}
+
+12. Use Cucumber Tags to Run Specific Tests
+• Use tags in feature files to run specific tests.
+
+Example:
+
+@smoke
+Feature: User Login
+Run tagged tests:
+
+@CucumberOptions(
+    features = "src/test/resources/features",
+    tags = "@smoke"
+)
+
+13. Parameterizing Test Data with Scenario Outline
+• Use ScenarioOutline and Examples to run tests with multiple data sets.
+
+Example:
+
+Scenario Outline: Login with valid credentials
+    Given User is on the login page
+    When User enters "<username>" and "<password>"
+    Then User is logged in successfully
+
+Examples:
+    | username | password |
+    | user1    | pass1    |
+    | user2    | pass2    |
+
+14. Create HTML & Extent Reports for Cucumber Selenium Tests
+• Generate HTML and Extent Reports after test execution using the Cucumber options or ExtentReports library.
+
+Example (Cucumber Options):
+
+plugin = {"pretty", "html:target/cucumber-reports", "json:target/cucumber-reports/cucumber.json"}
+
+15. Parallel Execution and Attach Screenshots in Extent Reports
+• Implement parallel test execution and attach screenshots for failed scenarios in ExtentReports.
+
+16. Run Cucumber Tests Using Maven & Command Line Options
+• Use Maven commands to run your tests:
+
+mvn clean test
+
+17. Integrate Framework with CI/CD Jenkins
+• Integrate the framework with Jenkins to run tests on code changes.
+• Schedule Jenkins jobs to run tests periodically.
+
+18. Create Parameterized Jenkins Job for Global Properties
+• Create parameterized Jenkins jobs to pass dynamic properties (e.g., browser type, environment) at runtime.
